@@ -7,17 +7,40 @@
 //
 
 #import "AppDelegate.h"
-
+#import <NIMSDK.h>
+#import "MPConfigh.h"
 @interface AppDelegate ()
-
+@property (nonatomic,strong) 
 @end
 
 @implementation AppDelegate
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // Override point for customization after application launch.
+    //在注册 NIMSDK appKey 之前先进行配置信息的注册，如是否使用新路径,是否要忽略某些通知，是否需要多端同步未读数
+    
+    //注册appkey
+    [self registerAppkey];
+    //注册APNS
+    [self registerAPNS];
+
     return YES;
+}
+#pragma mark  注册appkey
+- (void)registerAppkey {
+    
+    [[NIMSDK sharedSDK] registerWithAppID:[[MPConfigh sharedConfig] appKey] cerName:[[MPConfigh sharedConfig] cerName]];
+}
+#pragma mark  注册APNS
+- (void)registerAPNS{
+    
+    [[UIApplication sharedApplication] registerForRemoteNotifications];
+    
+    UIUserNotificationType types = UIUserNotificationTypeBadge | UIUserNotificationTypeSound | UIUserNotificationTypeAlert;
+    UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:types
+                                                                             categories:nil];
+    [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
+    
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {
